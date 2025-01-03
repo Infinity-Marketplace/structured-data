@@ -5521,13 +5521,13 @@ verror@1.10.0:
   version "3.17.4"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql#0e0abc699713a7113f1ec4948456bcd9e330d0f9"
 
-"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.11/public/@types/vtex.render-runtime":
-  version "8.134.11"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.11/public/@types/vtex.render-runtime#0e42a00ac9b26c34b5b18b7a080f7dc3a5ac9959"
+"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.135.1/public/@types/vtex.render-runtime":
+  version "8.135.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.135.1/public/@types/vtex.render-runtime#357ddee2f9249db4209de73b26c43997a5ca4422"
 
-"vtex.structured-data@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.structured-data@0.12.1/public/@types/vtex.structured-data":
-  version "0.12.1"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.structured-data@0.12.1/public/@types/vtex.structured-data#e16878cda359132ac26b5a83ed0123ec0cd486d5"
+"vtex.structured-data@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.structured-data@0.12.2/public/@types/vtex.structured-data":
+  version "0.12.2"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.structured-data@0.12.2/public/@types/vtex.structured-data#be001706e5e7e27cbfa6d725df8e61ca61dbb309"
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
