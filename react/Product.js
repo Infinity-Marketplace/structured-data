@@ -162,6 +162,38 @@ function parseBrand(brand) {
   }
 }
 
+const getSkuVariations = (skus) => {
+  return skus.reduce((acc, sku) => {
+    const { variations } = sku
+
+    if (!variations?.length) {
+      return acc
+    }
+
+    const newValues = [...acc]
+
+    variations.forEach((variation) => {
+      const variationName = variation.name.toLowerCase()
+
+      if (!newValues.includes(variationName)) {
+        newValues.push(variationName)
+      }
+    })
+
+    return newValues
+  }, [])
+}
+
+// Source: https://developers.google.com/search/docs/appearance/structured-data/product-variants
+const DEFAULT_VARIATIONS_PROPERTIES = [
+  'color',
+  'size',
+  'pattern',
+  'material',
+  'suggestedAge',
+  'suggestedGender',
+]
+
 export const parseToJsonLD = ({
   product,
   selectedItem,
@@ -172,16 +204,9 @@ export const parseToJsonLD = ({
   useSellerDefault,
   useImagesArray,
   disableAggregateOffer,
+  useProductGroup,
 }) => {
-  const images = selectedItem ? selectedItem.images : []
-  const { brand } = product
-  const name = product.productName
-
-  const mpn =
-    selectedItem?.referenceId?.[0]?.Value ||
-    product?.productReference ||
-    product?.productId
-
+  const { brand, productName, productId } = product
   const offers = composeAggregateOffer(product, currency, {
     decimals,
     pricesWithTax,
@@ -194,26 +219,101 @@ export const parseToJsonLD = ({
   }
 
   const baseUrl = getBaseUrl()
-
+  const productUrl = `${baseUrl}/${product.linkText}/p`
   const category = getCategoryName(product)
-
-  const gtin = selectedItem?.ean || null
 
   const productLD = {
     '@context': 'https://schema.org/',
-    '@type': 'Product',
-    '@id': `${baseUrl}/${product.linkText}/p`,
-    name,
+    name: productName,
     brand: parseBrand(brand),
-    image: useImagesArray
-      ? images.map((el) => el.imageUrl)
-      : images[0]?.imageUrl || null,
     description: product.metaTagDescription || product.description,
-    mpn,
-    sku: selectedItem?.itemId || null,
-    category,
-    offers: disableOffers ? null : offers,
-    gtin,
+  }
+
+  if (useProductGroup) {
+    const skuVariations = getSkuVariations(product.items)
+
+    productLD['@type'] = 'ProductGroup'
+    productLD.url = `${baseUrl}/${product.linkText}/p`
+    productLD.productGroupID = productId
+    productLD.variesBy = skuVariations
+    productLD.hasVariant = product.items.map((item) => {
+      const {
+        itemId,
+        ean,
+        images,
+        name,
+        complementName,
+        variations,
+        referenceId,
+      } = item
+
+      const productSchema = {
+        '@type': 'Product',
+        sku: itemId,
+        gtin: ean ?? null,
+        image: useImagesArray
+          ? images.map((el) => el.imageUrl)
+          : images[0]?.imageUrl || null,
+        name,
+        description: complementName || null,
+        mpn:
+          referenceId?.[0]?.Value ||
+          product?.productReference ||
+          product?.productId,
+        category,
+        url: `${productUrl}?skuId=${itemId}`,
+      }
+
+      // Add the specifications variations to the productSchema
+      variations.forEach((variation) => {
+        const variationName = variation.name
+        const [variationValue] = variation.values
+
+        if (
+          DEFAULT_VARIATIONS_PROPERTIES.includes(variationName.toLowerCase())
+        ) {
+          productSchema.variationName = variationValue
+        } else {
+          const variationProperty = {
+            '@type': 'PropertyValue',
+            name: variationName,
+            value: variationValue,
+          }
+
+          productSchema.additionalProperty
+            ? productSchema.additionalProperty.push(variationProperty)
+            : (productSchema.additionalProperty = [variationProperty])
+        }
+      })
+
+      // Add the offers to the productSchema
+      const offer = parseSKUToOffer(item, currency, {
+        decimals,
+        pricesWithTax,
+        useSellerDefault,
+      })
+
+      if (offer && !disableOffers) {
+        productSchema.offers = offer
+      }
+
+      return productSchema
+    })
+  } else {
+    const [image] = selectedItem ? selectedItem.images : []
+    const mpn =
+      selectedItem?.referenceId?.[0]?.Value ||
+      product?.productReference ||
+      product?.productId
+
+    productLD['@type'] = 'Product'
+    productLD['@id'] = productUrl
+    productLD.image = image?.imageUrl || null
+    productLD.mpn = mpn
+    productLD.sku = selectedItem?.itemId || null
+    productLD.category = category
+    productLD.offers = disableOffers ? null : offers
+    productLD.gtin = selectedItem?.ean || null
   }
 
   return productLD
@@ -231,6 +331,7 @@ function StructuredData({ product, selectedItem }) {
     useSellerDefault,
     useImagesArray,
     disableAggregateOffer,
+    useProductGroup,
   } = useAppSettings()
 
   const productLD = parseToJsonLD({
@@ -243,6 +344,7 @@ function StructuredData({ product, selectedItem }) {
     useSellerDefault,
     useImagesArray,
     disableAggregateOffer,
+    useProductGroup,
   })
 
   return <script {...jsonLdScriptProps(productLD)} />

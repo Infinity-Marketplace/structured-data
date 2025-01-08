@@ -58,6 +58,12 @@
         "type": "boolean",
         "default": false,
         "description": "Use single Offer insteand of AggregateOffer"
+      },
+      "useProductGroup": {
+        "title": "Use product group in product page",
+        "type": "boolean",
+        "default": false,
+        "description": "Use product group in product page"
       }
     }
   },
