@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `ProductGroup` structure as option for product page
+
 ## [0.12.2] - 2024-10-16
 
 ### Changed
+
 - **Product Schema** for **Reference Number**, `mpn` now uses item reference identification.
 
 ### Added
+
 - `GTIN` when `EAN` is available
 
 ## [0.12.1] - 2024-06-17

@@ -46,6 +46,12 @@
         "type": "boolean",
         "default": false,
         "description": "Use seller default price in AggregateOffer"
+      },
+      "useProductGroup": {
+        "title": "Use product group in product page",
+        "type": "boolean",
+        "default": false,
+        "description": "Use product group in product page"
       }
     }
   },
