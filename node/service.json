@@ -2,8 +2,8 @@
   "memory": 256,
   "ttl": 10,
   "timeout": 2,
-  "minReplicas": 2,
-  "maxReplicas": 4,
+  "minReplicas": 1,
+  "maxReplicas": 1,
   "workers": 1,
   "routes": {
     "ping": {

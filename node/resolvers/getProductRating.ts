@@ -35,7 +35,7 @@ export const getProductRating = async (
     )
 
     if (productRes?.status?.code !== 200) {
-      logger.info({
+      logger.error({
         flow: 'getProductRating',
         message: 'Error getting product rating',
         productId,
