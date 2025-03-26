@@ -1,0 +1,13 @@
+query GetProductRating($productId: String) {
+  getProductRating(productId: $productId) {
+    averageScore
+    totalReviews
+    reviews {
+      ratingValue
+      reviewTitle
+      reviewText
+      reviewAuthor
+      reviewDate
+    }
+  }
+}

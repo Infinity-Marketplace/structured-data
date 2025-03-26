@@ -7,6 +7,7 @@ import { pathOr, path, sort, last, flatten } from 'ramda'
 import { jsonLdScriptProps } from 'react-schemaorg'
 
 import useAppSettings from './hooks/useAppSettings'
+import { useYotpoReviews } from './hooks/useYotpoReviews'
 import { getBaseUrl } from './modules/baseUrl'
 
 const getSpotPrice = path(['commertialOffer', 'spotPrice'])
@@ -205,6 +206,9 @@ export const parseToJsonLD = ({
   useImagesArray,
   disableAggregateOffer,
   useProductGroup,
+  averageScore,
+  totalReviews,
+  reviews,
 }) => {
   const { brand, productName, productId } = product
   const offers = composeAggregateOffer(product, currency, {
@@ -227,6 +231,32 @@ export const parseToJsonLD = ({
     name: productName,
     brand: parseBrand(brand),
     description: product.metaTagDescription || product.description,
+    ...(averageScore && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue:
+          typeof averageScore === 'number'
+            ? averageScore.toFixed(2)
+            : averageScore,
+        reviewCount: totalReviews,
+        bestRating: '5',
+      },
+    }),
+    ...(reviews && {
+      review: reviews.map((review) => ({
+        '@type': 'Review',
+        reviewRating: {
+          ratingValue: review?.ratingValue?.toString() || '5',
+          bestRating: '5',
+        },
+        author: {
+          '@type': 'Person',
+          name: review.reviewAuthor || 'Anonymous',
+        },
+        datePublished: review.reviewDate,
+        reviewBody: review.reviewText,
+      })),
+    }),
   }
 
   if (useProductGroup) {
@@ -324,6 +354,10 @@ function StructuredData({ product, selectedItem }) {
     culture: { currency },
   } = useRuntime()
 
+  const { data } = useYotpoReviews(product?.productId)
+
+  const { averageScore, totalReviews, reviews } = data?.getProductRating ?? {}
+
   const {
     decimals,
     disableOffers,
@@ -345,6 +379,9 @@ function StructuredData({ product, selectedItem }) {
     useImagesArray,
     disableAggregateOffer,
     useProductGroup,
+    averageScore,
+    totalReviews,
+    reviews,
   })
 
   return <script {...jsonLdScriptProps(productLD)} />
