@@ -1,0 +1,18 @@
+type Query {
+  getProductRating(productId: String): ProductRatingResponse
+    @cacheControl(scope: PUBLIC, maxAge: MEDIUM)
+}
+
+type ProductRatingResponse {
+  averageScore: Float
+  totalReviews: Int
+  reviews: [Review]
+}
+
+type Review {
+  ratingValue: Int
+  reviewTitle: String
+  reviewText: String
+  reviewAuthor: String
+  reviewDate: String
+}
