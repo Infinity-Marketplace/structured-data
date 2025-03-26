@@ -7,15 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Added
-
-- Yotpo reviews in product schema
-
-## [0.12.3-hkignore.infinity] - 2025-01-15
+## [0.14.1-hkingore.infinity] - 2025-03-26
 
 ### Added
 
 - `ProductGroup` structure as option for product page
+- Yotpo reviews in product schema
 
 ## [0.14.0] - 2025-03-11
 
